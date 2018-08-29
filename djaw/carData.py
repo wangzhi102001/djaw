@@ -36,7 +36,14 @@ class carData():
         self.print_log()
 
     def add_log_finish(self):
-        self.log = "完成，%s,%s,%s,%s,%s 已录入系统。"% (datetime.now(),self.suoyin,self.carnumber,self.hpzl,self.address)   
+        self.log = "完成，%s,%s,%s,%s,%s 已录入系统。"% (datetime.now(),self.suoyin,self.carnumber,self.hpzl,self.address)  
+        
+    def add_error_log(self):
+        self.log = "错误，%s,%s,%s,%s,%s 录入异常。"% (datetime.now(),self.suoyin,self.carnumber,self.hpzl,self.address)   
+    def show_error(self):
+        self.error = True
+        self.add_error_log()
+        self.print_log()
 
 
     def add_pass_state(self):

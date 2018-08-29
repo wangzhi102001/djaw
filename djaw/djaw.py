@@ -38,7 +38,7 @@ switch_1 = True
 error_count = 0
 time_clock = 5
 b = True
-my = setting.setting("","")
+my = setting.setting("ctsz003","123456")
 #大型汽车=大型汽车
 #低速车 =？无法提取
 #普通摩托车=？无法提取
@@ -64,9 +64,11 @@ my = setting.setting("","")
 #start = time.time()
 
 e_to_j.json_to_carDatalist(
-    "car2.json", list_car_js, list_car, error, start, end, n,1,5000)#读取11767条数据耗时13秒
-print(list_car[1].hpzl)
+    "car2.json", list_car_js, list_car, error, start, end, n,2749,5000-2759)#读取11767条数据耗时13秒
 
+
+
+#1-2753  已以镇级区划录入
 
 #e_to_j.carDatalist_to_json(list_car, 'car2.json')
 
@@ -177,116 +179,162 @@ time.sleep(1)
 driver.find_element_by_xpath(my.xpath7).click()
 time.sleep(1)
 driver.find_element_by_xpath(my.xpath8).click()
-time.sleep(1)
+time.sleep(4)
 driver.switch_to.default_content() #恢复默认表单
 driver.switch_to_frame('rightFrame') #切换iframe
 
 main_windows=driver.current_window_handle #标记当前窗口为主窗口
 driver.find_element_by_xpath(my.xpath9).click()  
-#time.sleep(2)
+time.sleep(1)
 all_handles=driver.window_handles#标记所有窗口
 
-for handle in all_handles:
-    if handle !=main_windows:
-        driver.switch_to_window(handle)#切换到非主窗口
-
+#for handle in all_handles:
+#    if handle !=main_windows:
+#        driver.switch_to_window(handle)#切换到非主窗口
+driver.switch_to_window(all_handles[-1])
 # "大型汽车", "J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" 
 #   "大型汽车""J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"
 #list_car=[carData.carData("大型汽车","J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"),carData.carData("大型汽车","J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" )]
 
 
 
-    # for p1 in list(reversed(list_poor_family[:])):
+# for p1 in list(reversed(list_poor_family[:])):
+
 for p1 in list_car:
     #if p1.suoyin.endswith("50"):#每隔50条保存一次
     #        e_to_j.carDatalist_to_json(list_car, 'car.json')
+        
+    try:
+        if (p1.edit == False and p1.error == False): 
+            if p1.suoyin.endswith("0"):#每隔10条保存一次
+                e_to_j.carDatalist_to_json(list_car, 'car2.json')#写入11767条数据耗时13秒
+                
+            #WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            #                (By.XPATH, my.xpath11)))
+            #//td[@id = 'QY_Code_td']/input
+            time.sleep(3)
+            ele = driver.find_element_by_xpath(my.xpath11)  
+            driver.execute_script("arguments[0].focus();",ele)
+            time.sleep(1)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
+            driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
     
-
-    if (p1.edit == False and p1.error == False): 
-        if p1.suoyin.endswith("0"):#每隔50条保存一次
-            e_to_j.carDatalist_to_json(list_car, 'car2.json')#写入11767条数据耗时13秒
-        time.sleep(1)
-        ele = driver.find_element_by_xpath(my.xpath11)  
-        driver.execute_script("arguments[0].focus();",ele)
-        time.sleep(1)
-        driver.find_element_by_xpath(my.xpath10).click()  # 点击获取行政区划
-        time.sleep(0.5)
-        driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
-
-        time.sleep(0.5)
-        driver.find_element_by_xpath(my.xpathHPHM).clear() #清空
-        if p1.hpzl =="拖拉机":
-            driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber[1:]) #输入号牌
-        else:
-            driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber) #输入号牌
-        time.sleep(1)
-        driver.find_element_by_xpath(my.xpath16).click()  # 点击查重
-        time.sleep(1)
-        if '勿重复录入' in driver.find_element_by_xpath(my.xpath19).text:
-            driver.find_element_by_xpath(my.xpath18).click() #点击确定
-            p1.pass_state()
-            continue
-        else:
-            driver.find_element_by_xpath(my.xpath18).click() #点击确定
-        time.sleep(1)
-        #ele2 = driver.find_element_by_xpath(my.xpath15)
-        #driver.execute_script("arguments[0].click();",ele)# 点击提取
-
-        driver.find_element_by_xpath(my.xpath15).click()  # 点击提取
-        time.sleep(2)        
-        driver.find_element_by_xpath(my.xpath18).click()  # 点击提取后弹窗确定
-
-        time.sleep(1)
-        if p1.hpzl=='大型汽车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='蓝牌货车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='自卸低速货车'or p1.cllx=='普通低速货车'or p1.cllx=='罐式低速货车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮汽车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='三轮汽车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮汽车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='普通二轮摩托车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='两轮摩托车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='普通正三轮摩托车'or p1.cllx=='正三轮载货摩托车'or p1.cllx=='正三轮载客摩托车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮摩托车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='轻便二轮摩托车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='两轮摩托车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='小型方向盘式拖拉机' or p1.cllx=='大中型拖拉机':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='拖拉机（农用车）']").click()  # 点击获取车辆类别
-
-        elif p1.cllx=='轻型仓栅式货车' or p1.cllx=='轻型封闭货车' or p1.cllx=='轻型普通货车' or p1.cllx=='轻型厢式货车' or p1.cllx=='轻型自卸货车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='黄牌货车']").click()  # 点击获取车辆类别
-        elif p1.cllx=='微型轿车'or p1.cllx=='小型轿车'or p1.cllx=='小型面包车' or p1.cllx == '小型普通客车' or p1.cllx == '小型越野客车' or p1.cllx == '小型专用客车':
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='小客车（轿车）']").click()  # 点击获取车辆类别
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpathHPHM).clear() #清空
+            if p1.hpzl =="拖拉机":
+                driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber[1:]) #输入号牌
+            else:
+                driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber) #输入号牌
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath16).click()  # 点击查重
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))
+            if '勿重复录入' in driver.find_element_by_xpath(my.xpath19).text:
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
+                p1.pass_state()
+                continue
+            else:
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
+            time.sleep(1)
+            #ele2 = driver.find_element_by_xpath(my.xpath15)
+            #driver.execute_script("arguments[0].click();",ele)# 点击提取
+    
+            driver.find_element_by_xpath(my.xpath15).click()  # 点击提取
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))
+             
+            driver.find_element_by_xpath(my.xpath18).click()  # 点击提取后弹窗确定
+    
+            time.sleep(1)
+            if p1.hpzl=='大型汽车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='蓝牌货车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='自卸低速货车'or p1.cllx=='普通低速货车'or p1.cllx=='罐式低速货车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮汽车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='三轮汽车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮汽车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='普通二轮摩托车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='两轮摩托车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='普通正三轮摩托车'or p1.cllx=='正三轮载货摩托车'or p1.cllx=='正三轮载客摩托车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='三轮摩托车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='轻便二轮摩托车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//select[@id='CheLLB']/option[@attname='两轮摩托车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='小型方向盘式拖拉机' or p1.cllx=='大中型拖拉机':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='拖拉机（农用车）']").click()  # 点击获取车辆类别
+    
+            elif p1.cllx=='轻型仓栅式货车' or p1.cllx=='轻型封闭货车' or p1.cllx=='轻型普通货车' or p1.cllx=='轻型厢式货车' or p1.cllx=='轻型自卸货车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='黄牌货车']").click()  # 点击获取车辆类别
+            elif p1.cllx=='微型轿车'or p1.cllx=='小型轿车'or p1.cllx=='小型面包车' or p1.cllx == '小型普通客车' or p1.cllx == '小型越野客车' or p1.cllx == '小型专用客车':
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='小客车（轿车）']").click()  # 点击获取车辆类别
+            else :
+                driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='其他']").click()  # 点击获取车辆类别
+    
+            time.sleep(0.5)
+    
+            if p1.hpzl =="拖拉机":
+                driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='非营运']").click()  # 点击获取使用性质
+            elif p1.syxz =="非营运":
+                driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='非营运']").click()  # 点击获取使用性质
+            elif p1.syxz =="货运":
+                driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='货运']").click()  # 点击获取使用性质
+            elif p1.syxz =="营转非":
+                driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='营转非']").click()  # 点击获取使用性质
+            else:
+                driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='其他']").click()  # 点击获取使用性质
+            time.sleep(0.5)
+    
+            driver.find_element_by_xpath(my.xpath25).click()  #是否客运车辆 否 radio按钮
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath24).send_keys(p1.date)#传入摸底日期
+            driver.find_element_by_xpath(my.xpath20).click()#点击保存
+            p1.show_edit()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))     
+            #time.sleep(1)
+            driver.find_element_by_xpath(my.xpath18).click()#点击继续
         else :
-            driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='其他']").click()  # 点击获取车辆类别
-
+            p1.pass_state()
+    except TimeoutException :
+        p1.show_error()
+        print("")
+        driver.driver.current_window_handle.close()
+        driver.switch_to_window(main_windows)#切换到主窗口
+        driver.refresh()
+        time.sleep(3)
+        driver.switch_to_frame('leftFrame') #切换iframe
+        #driver.find_element_by_xpath(my.xpath102).click() #点击农村驾驶人
         time.sleep(1)
+        driver.find_element_by_xpath(my.xpath5).click()
 
-        if p1.hpzl =="拖拉机":
-            driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='非营运']").click()  # 点击获取使用性质
-        elif p1.syxz =="非营运":
-            driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='非营运']").click()  # 点击获取使用性质
-        elif p1.syxz =="货运":
-            driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='货运']").click()  # 点击获取使用性质
-        elif p1.syxz =="营转非":
-            driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='营转非']").click()  # 点击获取使用性质
-        else:
-            driver.find_element_by_xpath(my.xpathSYXZ).find_element_by_xpath("//option[@attname='其他']").click()  # 点击获取使用性质
+        #js = "document.querySelector('#menutab_2').click()"
+        #driver.execute_script(js)
+
+        #driver.find_element_by_xpath(my.xpath5).click()
         time.sleep(1)
-
-        driver.find_element_by_xpath(my.xpath25).click()  #是否客运车辆 否 radio按钮
+        driver.find_element_by_xpath(my.xpathjcxxgl).click()
         time.sleep(1)
-        driver.find_element_by_xpath(my.xpath24).send_keys(p1.date)#传入摸底日期
-        driver.find_element_by_xpath(my.xpath20).click()#点击保存
-        p1.show_edit()
+        driver.find_element_by_xpath(my.xpath7).click()
         time.sleep(1)
-        driver.find_element_by_xpath(my.xpath18).click()#点击继续
-    else :
-        p1.pass_state()
+        driver.find_element_by_xpath(my.xpath8).click()
+        time.sleep(1)
+        driver.switch_to.default_content() #恢复默认表单
+        driver.switch_to_frame('rightFrame') #切换iframe
+
+        main_windows=driver.current_window_handle #标记当前窗口为主窗口
+        driver.find_element_by_xpath(my.xpath9).click()  
+        #time.sleep(2)
+        all_handles=driver.window_handles#标记所有窗口
+
+        for handle in all_handles:
+            if handle !=main_windows:
+                driver.switch_to_window(handle)#切换到非主窗口
+        continue
 
 
-driver.switch_to_window(main_windows)#切换到主窗口
 with open("log.txt", 'w', encoding="utf-8") as f:
     for p1 in list_car:
         f.writelines(p1.log+'\n')
-driver.close()
+driver.quit()
 

@@ -26,10 +26,10 @@ class setting():
 
 
         self.xpath9 = "//li[@id ='btn_add']"#添加按钮
-        self.xpath10 = "//a[@attr_name = '城头山镇']" #城头山镇按钮
+        self.xpath10 = "//a[@attr_name = '大庙村']" #城头山镇按钮
         self.xpathjiahao = "//img[@code='000430007027008']"#城头山镇前加号按钮
         self.xpath12 = "//a[@attr_name = '城头山镇']" #各村级按钮
-        self.xpath11 = "//td[@id = 'QY_Code_td']/input" #行政区划openselect
+        self.xpath11 = "//input[@id = 'QY_Code']" #行政区划openselect
         self.xpathHPZL = "//select[@id = 'HPZL']" #号牌种类select
         self.xpathCLLB = "//select[@id = 'CheLLB']" #车辆类别select
         self.xpathSYXZ = "//select[@id = 'ShiYXZ']" #使用性质select
@@ -42,7 +42,7 @@ class setting():
         self.xpath16 = "//a[@class = 'addCPname bluebutton ']"#机动车查重按钮
         self.xpath15 = "//a[@class = 'addCXJDC bluebutton ']"#机动车提取按钮
         self.xpath18 = "//a[@class = 'button button_ok']" #提取成功后弹窗确定按钮
-        self.xpath19 = "//div[@class = 'SysMsgMain']/div" #提取成功后弹窗内容元素
+        self.xpath19 = "//div[@class='SysMsgMain']/div" #提取成功后弹窗内容元素
 
         self.xpath20 = "//a[@id = 'save']" #二页面保存按钮
         self.xpath21 = "//a[@id = 'Close']" #二页面关闭按钮

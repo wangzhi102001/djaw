@@ -38,7 +38,7 @@ switch_1 = True
 error_count = 0
 time_clock = 5
 b = True
-my = setting.setting("ctsz003","123456")
+my = setting.setting("ctsz004","123456")
 #大型汽车=大型汽车
 #低速车 =？无法提取
 #普通摩托车=？无法提取
@@ -64,7 +64,7 @@ my = setting.setting("ctsz003","123456")
 #start = time.time()
 
 e_to_j.json_to_carDatalist(
-    "car2.json", list_car_js, list_car, error, start, end, n,2749,5000-2759)#读取11767条数据耗时13秒
+    "car2.json", list_car_js, list_car, error, start, end, n,1,5000)#读取11767条数据耗时13秒
 
 
 
@@ -192,6 +192,7 @@ all_handles=driver.window_handles#标记所有窗口
 #    if handle !=main_windows:
 #        driver.switch_to_window(handle)#切换到非主窗口
 driver.switch_to_window(all_handles[-1])
+type_window = driver.current_window_handle
 # "大型汽车", "J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" 
 #   "大型汽车""J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"
 #list_car=[carData.carData("大型汽车","J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"),carData.carData("大型汽车","J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" )]
@@ -208,21 +209,7 @@ for p1 in list_car:
         if (p1.edit == False and p1.error == False): 
             if p1.suoyin.endswith("0"):#每隔10条保存一次
                 e_to_j.carDatalist_to_json(list_car, 'car2.json')#写入11767条数据耗时13秒
-                
-            #WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-            #                (By.XPATH, my.xpath11)))
-            #//td[@id = 'QY_Code_td']/input
-            time.sleep(3)
-            ele = driver.find_element_by_xpath(my.xpath11)  
-            driver.execute_script("arguments[0].focus();",ele)
             time.sleep(1)
-            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                            (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
-            driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
-            time.sleep(0.5)
-            driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
-    
-            time.sleep(0.5)
             driver.find_element_by_xpath(my.xpathHPHM).clear() #清空
             if p1.hpzl =="拖拉机":
                 driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber[1:]) #输入号牌
@@ -241,14 +228,22 @@ for p1 in list_car:
             time.sleep(1)
             #ele2 = driver.find_element_by_xpath(my.xpath15)
             #driver.execute_script("arguments[0].click();",ele)# 点击提取
-    
             driver.find_element_by_xpath(my.xpath15).click()  # 点击提取
             WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                             (By.XPATH, my.xpath19)))
-             
             driver.find_element_by_xpath(my.xpath18).click()  # 点击提取后弹窗确定
-    
-            time.sleep(1)
+            time.sleep(2)
+            #WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            #                (By.XPATH, my.xpath11)))
+            #//td[@id = 'QY_Code_td']/input
+            ele = driver.find_element_by_xpath(my.xpath11)  
+            driver.execute_script("arguments[0].focus();",ele)
+            time.sleep(2)
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
+            driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
             if p1.hpzl=='大型汽车':
                 driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='蓝牌货车']").click()  # 点击获取车辆类别
             elif p1.cllx=='自卸低速货车'or p1.cllx=='普通低速货车'or p1.cllx=='罐式低速货车':
@@ -287,19 +282,28 @@ for p1 in list_car:
     
             driver.find_element_by_xpath(my.xpath25).click()  #是否客运车辆 否 radio按钮
             time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath24).clear()
             driver.find_element_by_xpath(my.xpath24).send_keys(p1.date)#传入摸底日期
             driver.find_element_by_xpath(my.xpath20).click()#点击保存
-            p1.show_edit()
+            
             WebDriverWait(driver, 10).until(EC.presence_of_element_located(
                             (By.XPATH, my.xpath19)))     
             #time.sleep(1)
-            driver.find_element_by_xpath(my.xpath18).click()#点击继续
+            if '添加车辆成功' in driver.find_element_by_xpath(my.xpath19).text:
+                p1.show_edit()
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
+            elif '不能再重复录入' in driver.find_element_by_xpath(my.xpath19).text:
+                p1.pass_state()
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
+                driver.refresh()
+                
         else :
             p1.pass_state()
-    except TimeoutException :
+    except TimeoutException as e:
+        e_to_j.carDatalist_to_json(list_car, 'car2.json')
         p1.show_error()
-        print("")
-        driver.driver.current_window_handle.close()
+        print(e)
+        driver.close()
         driver.switch_to_window(main_windows)#切换到主窗口
         driver.refresh()
         time.sleep(3)
@@ -330,6 +334,7 @@ for p1 in list_car:
         for handle in all_handles:
             if handle !=main_windows:
                 driver.switch_to_window(handle)#切换到非主窗口
+        type_window = driver.current_window_handle
         continue
 
 

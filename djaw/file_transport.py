@@ -29,7 +29,7 @@ def file_to_json_fomat(path1,path2,list_car):
 
 
 
-def json_to_carDatalist(path,list_js,list,error,start,end,n,suoyinstart,count):
+def json_to_carDatalist(path,list_js,list,error,start,end,n,suoyinstart,suoyinend):
     with open(path,'r',encoding ="utf-8")as f:#加载json文件
         list_js =json.load(f)#将加载的json文件转换成字典列表
 #input()
@@ -49,7 +49,7 @@ def json_to_carDatalist(path,list_js,list,error,start,end,n,suoyinstart,count):
         else:
             continue
         print("已添加%s"% car['suoyin'])
-        if int(car['suoyin'])>=(count+suoyinstart):
+        if int(car['suoyin'])>=suoyinend:
             break
         
     print("总共添加%s项,%s项已完成，%s项待完成(其中%s项出错，待手工处理)"% (n,end,start,error))

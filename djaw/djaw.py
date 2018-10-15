@@ -210,6 +210,7 @@ for p1 in list_car:
             if p1.suoyin.endswith("0"):#每隔10条保存一次
                 e_to_j.carDatalist_to_json(list_car, 'car2.json')#写入11767条数据耗时13秒
             time.sleep(1)
+            driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
             driver.find_element_by_xpath(my.xpathHPHM).clear() #清空
             if p1.hpzl =="拖拉机":
                 driver.find_element_by_xpath(my.xpathHPHM).send_keys(p1.carnumber[1:]) #输入号牌
@@ -243,7 +244,7 @@ for p1 in list_car:
                             (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
             driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
             time.sleep(0.5)
-            driver.find_element_by_xpath(my.xpathHPZL).find_element_by_xpath("//option[@attname='%s']"% p1.hpzl).click()  # 点击获取号牌种类
+
             if p1.hpzl=='大型汽车':
                 driver.find_element_by_xpath(my.xpathCLLB).find_element_by_xpath("//option[@attname='蓝牌货车']").click()  # 点击获取车辆类别
             elif p1.cllx=='自卸低速货车'or p1.cllx=='普通低速货车'or p1.cllx=='罐式低速货车':
